@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="LSBSteganographyDetector.Views.BatchResultsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Batch Analysis Results"
+             BackgroundColor="{StaticResource BackgroundSecondary}">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="24">
+            
+            <!-- Modern Header with Gradient Background -->
+            <Frame Grid.Row="0" Style="{StaticResource GradientCardStyle}" Margin="0,0,0,24">
+                <StackLayout Spacing="16">
+                    <Label Text="📊 Batch Analysis Results" 
+                           Style="{StaticResource HeadlineStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           FontSize="28" />
+                    <Label x:Name="SummaryLabel"
+                           Text="Analysis summary will appear here" 
+                           Style="{StaticResource BodyStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           Opacity="0.9" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Enhanced Statistics Panel -->
+            <Frame Grid.Row="1" Style="{StaticResource ElevatedCardStyle}" Margin="0,0,0,24">
+                <StackLayout Spacing="24">
+                    <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                        <Label Text="📈" FontSize="24" VerticalOptions="Center" />
+                        <Label Text="Processing Statistics" 
+                               Style="{StaticResource SubheadlineStyle}"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="20">
+                        
+                        <!-- Total Images -->
+                        <Frame Grid.Column="0" Grid.Row="0" 
+                               BackgroundColor="{StaticResource BackgroundTertiary}"
+                               CornerRadius="16"
+                               Padding="16"
+                               HasShadow="False">
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label Text="📁" FontSize="32" HorizontalOptions="Center" />
+                                <Label x:Name="TotalImagesLabel" 
+                                       Text="0" 
+                                       Style="{StaticResource SubheadlineStyle}"
+                                       FontSize="24" 
+                                       HorizontalOptions="Center" />
+                                <Label Text="Total Images" 
+                                       Style="{StaticResource CaptionStyle}"
+                                       HorizontalOptions="Center" 
+                                       FontAttributes="Bold" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- High Risk -->
+                        <Frame Grid.Column="1" Grid.Row="0" 
+                               BackgroundColor="#FEF2F2"
+                               CornerRadius="16"
+                               Padding="16"
+                               HasShadow="False">
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label Text="⚠️" FontSize="32" HorizontalOptions="Center" />
+                                <Label x:Name="HighRiskLabel" 
+                                       Text="0" 
+                                       Style="{StaticResource SubheadlineStyle}"
+                                       FontSize="24" 
+                                       TextColor="{StaticResource Error}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="High Risk" 
+                                       Style="{StaticResource CaptionStyle}"
+                                       TextColor="{StaticResource Error}"
+                                       HorizontalOptions="Center" 
+                                       FontAttributes="Bold" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Medium Risk -->
+                        <Frame Grid.Column="2" Grid.Row="0" 
+                               BackgroundColor="#FFFBEB"
+                               CornerRadius="16"
+                               Padding="16"
+                               HasShadow="False">
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label Text="⚡" FontSize="32" HorizontalOptions="Center" />
+                                <Label x:Name="MediumRiskLabel" 
+                                       Text="0" 
+                                       Style="{StaticResource SubheadlineStyle}"
+                                       FontSize="24" 
+                                       TextColor="{StaticResource Warning}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Medium Risk" 
+                                       Style="{StaticResource CaptionStyle}"
+                                       TextColor="{StaticResource Warning}"
+                                       HorizontalOptions="Center" 
+                                       FontAttributes="Bold" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Clean Images -->
+                        <Frame Grid.Column="3" Grid.Row="0" 
+                               BackgroundColor="#F0FDF4"
+                               CornerRadius="16"
+                               Padding="16"
+                               HasShadow="False">
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label Text="✅" FontSize="32" HorizontalOptions="Center" />
+                                <Label x:Name="CleanImagesLabel" 
+                                       Text="0" 
+                                       Style="{StaticResource SubheadlineStyle}"
+                                       FontSize="24" 
+                                       TextColor="{StaticResource Success}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Clean Images" 
+                                       Style="{StaticResource CaptionStyle}"
+                                       TextColor="{StaticResource Success}"
+                                       HorizontalOptions="Center" 
+                                       FontAttributes="Bold" />
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Processing Time -->
+                        <Frame Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" 
+                               BackgroundColor="{StaticResource BackgroundTertiary}"
+                               CornerRadius="16"
+                               Padding="20"
+                               HasShadow="False">
+                            <StackLayout Orientation="Horizontal" 
+                                         HorizontalOptions="Center" 
+                                         Spacing="12">
+                                <Label Text="⏱️" FontSize="24" VerticalOptions="Center" />
+                                <Label Text="Processing Time:" 
+                                       Style="{StaticResource BodyLargeStyle}"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center" />
+                                <Label x:Name="ProcessingTimeLabel" 
+                                       Text="0 ms" 
+                                       Style="{StaticResource BodyLargeStyle}"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       VerticalOptions="Center" />
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Results Tabs Section -->
+            <Frame Grid.Row="2" Style="{StaticResource ElevatedCardStyle}">
+                <StackLayout Spacing="20">
+                    <!-- Tab Header -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Button x:Name="HighRiskTab" 
+                                Grid.Column="0"
+                                Text="⚠️ High Risk"
+                                Style="{StaticResource DangerButtonStyle}"
+                                HeightRequest="45"
+                                FontSize="14"
+                                Clicked="OnHighRiskTabClicked" />
+                        <Button x:Name="MediumRiskTab" 
+                                Grid.Column="1"
+                                Text="⚡ Medium Risk"
+                                Style="{StaticResource WarningButtonStyle}"
+                                HeightRequest="45"
+                                FontSize="14"
+                                Clicked="OnMediumRiskTabClicked" />
+                        <Button x:Name="CleanTab" 
+                                Grid.Column="2"
+                                Text="✅ Clean"
+                                Style="{StaticResource SuccessButtonStyle}"
+                                HeightRequest="45"
+                                FontSize="14"
+                                Clicked="OnCleanTabClicked" />
+                    </Grid>
+
+                    <!-- Tab Content -->
+                    <!-- High-Risk Images -->
+                    <StackLayout x:Name="HighRiskContent" IsVisible="True">
+                        <Label x:Name="HighRiskDescriptionLabel"
+                               Text="Images flagged as potentially containing steganographic content" 
+                               Style="{StaticResource BodyStyle}"
+                               HorizontalTextAlignment="Center" />
+                        
+                        <CollectionView x:Name="HighRiskImagesCollection" 
+                                        BackgroundColor="Transparent"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnImageSelected">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="#FEF2F2" 
+                                           CornerRadius="16"
+                                           Padding="20" 
+                                           Margin="0,8" 
+                                           HasShadow="False"
+                                           BorderColor="{StaticResource ErrorLight}">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="80,*,Auto" ColumnSpacing="16" RowSpacing="8">
+                                            <!-- Image Thumbnail -->
+                                            <Frame Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" 
+                                                   BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                                   HasShadow="False" 
+                                                   CornerRadius="12"
+                                                   Padding="12">
+                                                <Label Text="🖼️" 
+                                                       FontSize="32" 
+                                                       HorizontalOptions="Center" 
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <!-- File Info -->
+                                            <StackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                                                <Label Text="{Binding FileName}" 
+                                                       Style="{StaticResource BodyLargeStyle}"
+                                                       FontAttributes="Bold" />
+                                                <Label Text="{Binding FileSizeFormatted}" 
+                                                       Style="{StaticResource CaptionStyle}" />
+                                            </StackLayout>
+                                            <!-- Risk Level Badge -->
+                                            <Frame Grid.Row="0" Grid.Column="2" 
+                                                   BackgroundColor="{StaticResource Error}"
+                                                   CornerRadius="12"
+                                                   Padding="12,6"
+                                                   HasShadow="False"
+                                                   VerticalOptions="Center">
+                                                <Label Text="{Binding Result.RiskLevel}" 
+                                                       Style="{StaticResource CaptionStyle}"
+                                                       TextColor="{StaticResource TextInverse}"
+                                                       FontAttributes="Bold" />
+                                            </Frame>
+                                            <!-- Confidence Score -->
+                                            <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                         Orientation="Horizontal" 
+                                                         Spacing="8">
+                                                <Label Text="📊" FontSize="14" VerticalOptions="Center" />
+                                                <Label Text="Confidence:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                                <Label Text="{Binding ConfidenceFormatted}" 
+                                                       Style="{StaticResource BodyStyle}"
+                                                       FontAttributes="Bold" 
+                                                       TextColor="{StaticResource Error}" />
+                                            </StackLayout>
+                                            <!-- Suspicious Tests -->
+                                            <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                   Text="{Binding SuspiciousTestsText}" 
+                                                   Style="{StaticResource CaptionStyle}"
+                                                   TextColor="{StaticResource Error}"
+                                                   FontAttributes="Italic" />
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        
+                        <!-- Empty State for High-Risk -->
+                        <StackLayout x:Name="EmptyHighRiskPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                            <Label Text="🎉" FontSize="64" HorizontalOptions="Center" />
+                            <Label Text="No High-Risk Images Found!" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   HorizontalOptions="Center" 
+                                   TextColor="{StaticResource Success}" />
+                            <Label Text="All analyzed images appear to be clean!" 
+                                   Style="{StaticResource BodyStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </StackLayout>
+
+                    <!-- Medium-Risk Images -->
+                    <StackLayout x:Name="MediumRiskContent" IsVisible="False">
+                        <Label Text="Images with moderate steganography indicators" 
+                               Style="{StaticResource BodyStyle}"
+                               HorizontalTextAlignment="Center" />
+                        
+                        <CollectionView x:Name="MediumRiskImagesCollection" 
+                                        BackgroundColor="Transparent"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnImageSelected">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="#FFFBEB" 
+                                           CornerRadius="16"
+                                           Padding="20" 
+                                           Margin="0,8" 
+                                           HasShadow="False"
+                                           BorderColor="{StaticResource Warning}">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="80,*,Auto" ColumnSpacing="16" RowSpacing="8">
+                                            <!-- Image Thumbnail -->
+                                            <Frame Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" 
+                                                   BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                                   HasShadow="False" 
+                                                   CornerRadius="12"
+                                                   Padding="12">
+                                                <Label Text="🖼️" 
+                                                       FontSize="32" 
+                                                       HorizontalOptions="Center" 
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <!-- File Info -->
+                                            <StackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                                                <Label Text="{Binding FileName}" 
+                                                       Style="{StaticResource BodyLargeStyle}"
+                                                       FontAttributes="Bold" />
+                                                <Label Text="{Binding FileSizeFormatted}" 
+                                                       Style="{StaticResource CaptionStyle}" />
+                                            </StackLayout>
+                                            <!-- Risk Level Badge -->
+                                            <Frame Grid.Row="0" Grid.Column="2" 
+                                                   BackgroundColor="{StaticResource Warning}"
+                                                   CornerRadius="12"
+                                                   Padding="12,6"
+                                                   HasShadow="False"
+                                                   VerticalOptions="Center">
+                                                <Label Text="{Binding Result.RiskLevel}" 
+                                                       Style="{StaticResource CaptionStyle}"
+                                                       TextColor="{StaticResource TextInverse}"
+                                                       FontAttributes="Bold" />
+                                            </Frame>
+                                            <!-- Confidence Score -->
+                                            <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                         Orientation="Horizontal" 
+                                                         Spacing="8">
+                                                <Label Text="📊" FontSize="14" VerticalOptions="Center" />
+                                                <Label Text="Confidence:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                                <Label Text="{Binding ConfidenceFormatted}" 
+                                                       Style="{StaticResource BodyStyle}"
+                                                       FontAttributes="Bold" 
+                                                       TextColor="{StaticResource Warning}" />
+                                            </StackLayout>
+                                            <!-- Suspicious Tests -->
+                                            <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                   Text="{Binding SuspiciousTestsText}" 
+                                                   Style="{StaticResource CaptionStyle}"
+                                                   TextColor="{StaticResource Warning}"
+                                                   FontAttributes="Italic" />
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        
+                        <!-- Empty State for Medium-Risk -->
+                        <StackLayout x:Name="EmptyMediumRiskPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                            <Label Text="⚡" FontSize="64" HorizontalOptions="Center" />
+                            <Label Text="No Medium-Risk Images" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   HorizontalOptions="Center" 
+                                   TextColor="{StaticResource Warning}" />
+                            <Label Text="No images with moderate steganography indicators." 
+                                   Style="{StaticResource BodyStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </StackLayout>
+
+                    <!-- Clean Images -->
+                    <StackLayout x:Name="CleanContent" IsVisible="False">
+                        <Label Text="Images that passed all detection tests" 
+                               Style="{StaticResource BodyStyle}"
+                               HorizontalTextAlignment="Center" />
+                        
+                        <CollectionView x:Name="CleanImagesCollection" 
+                                        BackgroundColor="Transparent"
+                                        SelectionMode="Single"
+                                        SelectionChanged="OnImageSelected">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="#F0FDF4" 
+                                           CornerRadius="16"
+                                           Padding="20" 
+                                           Margin="0,8" 
+                                           HasShadow="False"
+                                           BorderColor="{StaticResource Success}">
+                                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="80,*,Auto" ColumnSpacing="16" RowSpacing="8">
+                                            <!-- Image Thumbnail -->
+                                            <Frame Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" 
+                                                   BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                                   HasShadow="False" 
+                                                   CornerRadius="12"
+                                                   Padding="12">
+                                                <Label Text="🖼️" 
+                                                       FontSize="32" 
+                                                       HorizontalOptions="Center" 
+                                                       VerticalOptions="Center" />
+                                            </Frame>
+                                            <!-- File Info -->
+                                            <StackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                                                <Label Text="{Binding FileName}" 
+                                                       Style="{StaticResource BodyLargeStyle}"
+                                                       FontAttributes="Bold" />
+                                                <Label Text="{Binding FileSizeFormatted}" 
+                                                       Style="{StaticResource CaptionStyle}" />
+                                            </StackLayout>
+                                            <!-- Risk Level Badge -->
+                                            <Frame Grid.Row="0" Grid.Column="2" 
+                                                   BackgroundColor="{StaticResource Success}"
+                                                   CornerRadius="12"
+                                                   Padding="12,6"
+                                                   HasShadow="False"
+                                                   VerticalOptions="Center">
+                                                <Label Text="{Binding Result.RiskLevel}" 
+                                                       Style="{StaticResource CaptionStyle}"
+                                                       TextColor="{StaticResource TextInverse}"
+                                                       FontAttributes="Bold" />
+                                            </Frame>
+                                            <!-- Confidence Score -->
+                                            <StackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                         Orientation="Horizontal" 
+                                                         Spacing="8">
+                                                <Label Text="📊" FontSize="14" VerticalOptions="Center" />
+                                                <Label Text="Confidence:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                                <Label Text="{Binding ConfidenceFormatted}" 
+                                                       Style="{StaticResource BodyStyle}"
+                                                       FontAttributes="Bold" 
+                                                       TextColor="{StaticResource Success}" />
+                                            </StackLayout>
+                                            <!-- Test Results -->
+                                            <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
+                                                   Text="All tests passed" 
+                                                   Style="{StaticResource CaptionStyle}"
+                                                   TextColor="{StaticResource Success}"
+                                                   FontAttributes="Italic" />
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        
+                        <!-- Empty State for Clean -->
+                        <StackLayout x:Name="EmptyCleanPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                            <Label Text="🔍" FontSize="64" HorizontalOptions="Center" />
+                            <Label Text="No Clean Images" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   HorizontalOptions="Center" 
+                                   TextColor="{StaticResource Success}" />
+                            <Label Text="No clean images found in this batch." 
+                                   Style="{StaticResource BodyStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Enhanced Action Buttons -->
+            <StackLayout Grid.Row="3" Spacing="16" Margin="0,24,0,0">
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                    <Button x:Name="ExportReportButton"
+                            Grid.Column="0"
+                            Text="📄 Export Report"
+                            Style="{StaticResource WarningButtonStyle}"
+                            HeightRequest="52"
+                            FontSize="14"
+                            Clicked="OnExportReportClicked" />
+                    
+                    <Button x:Name="BackToMainButton"
+                            Grid.Column="1"
+                            Text="🔙 Back to Main"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            HeightRequest="52"
+                            FontSize="14"
+                            Clicked="OnBackToMainClicked" />
+
+                    <Button x:Name="ProcessAnotherFolderButton"
+                            Grid.Column="2"
+                            Text="📁 Process Another"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            HeightRequest="52"
+                            FontSize="14"
+                            Clicked="OnProcessAnotherFolderClicked" />
+                </Grid>
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage> 

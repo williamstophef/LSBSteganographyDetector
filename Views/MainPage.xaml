@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="LSBSteganographyDetector.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="LSB Steganography Detector"
+             BackgroundColor="{StaticResource BackgroundSecondary}">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,*,Auto" Padding="24">
+            
+            <!-- Modern Header with Gradient Background -->
+            <Frame Grid.Row="0" Style="{StaticResource GradientCardStyle}" Margin="0,0,0,24">
+                <StackLayout Spacing="16">
+                    <Label Text="🔍 LSB Steganography Detector" 
+                           Style="{StaticResource HeadlineStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           FontSize="30" />
+                    <Label Text="Advanced statistical analysis to detect hidden messages in images" 
+                           Style="{StaticResource BodyStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           Opacity="0.9" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Main Content -->
+            <StackLayout Grid.Row="1" Spacing="24">
+                
+                <!-- Selection Mode Section -->
+                <Frame Style="{StaticResource ElevatedCardStyle}">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="📁" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Choose Analysis Mode" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="16">
+                            <!-- Single Image Mode -->
+                            <Button x:Name="SelectImageButton"
+                                    Grid.Column="0" Grid.Row="0"
+                                    Text="🖼️ Single Image"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    HeightRequest="60"
+                                    Clicked="OnSelectImageClicked" />
+                            
+                            <!-- Batch Folder Mode -->
+                            <Button x:Name="SelectFolderButton"
+                                    Grid.Column="1" Grid.Row="0"
+                                    Text="📁 Batch Folder"
+                                    Style="{StaticResource DangerButtonStyle}"
+                                    HeightRequest="60"
+                                    Clicked="OnSelectFolderClicked" />
+                            
+                            <!-- Mode descriptions -->
+                            <Label Grid.Column="0" Grid.Row="1"
+                                   Text="Analyze a single image file for steganographic content"
+                                   Style="{StaticResource CaptionStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                            
+                            <Label Grid.Column="1" Grid.Row="1"
+                                   Text="Process entire folder and identify high-risk images"
+                                   Style="{StaticResource CaptionStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </Grid>
+                        
+                        <!-- Selected Image Info with enhanced styling -->
+                        <StackLayout x:Name="ImageInfoPanel" IsVisible="False" Spacing="16">
+                            <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" Margin="0,8" />
+                            <Label x:Name="SelectedImageLabel" 
+                                   Style="{StaticResource BodyLargeStyle}"
+                                   FontAttributes="Bold" 
+                                   HorizontalOptions="Center" />
+                            <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                   CornerRadius="16" 
+                                   Padding="16"
+                                   HasShadow="False">
+                                <Image x:Name="PreviewImage" 
+                                       HeightRequest="240" 
+                                       WidthRequest="240" 
+                                       Aspect="AspectFit" />
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Analysis Section -->
+                <Frame x:Name="AnalysisFrame" 
+                       Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="False">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="🔬" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Analysis" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <Button x:Name="AnalyzeButton"
+                                Text="🚀 Start Analysis"
+                                Style="{StaticResource SuccessButtonStyle}"
+                                HeightRequest="56"
+                                FontSize="18"
+                                Clicked="OnAnalyzeClicked" />
+                        
+                        <!-- Enhanced Progress Indicator -->
+                        <StackLayout x:Name="ProgressPanel" IsVisible="False" Spacing="16">
+                            <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                   CornerRadius="12" 
+                                   Padding="24"
+                                   HasShadow="False">
+                                <StackLayout Spacing="12">
+                                    <ActivityIndicator x:Name="ProgressIndicator" 
+                                                       IsRunning="False" 
+                                                       Color="{StaticResource Primary}"
+                                                       WidthRequest="40"
+                                                       HeightRequest="40" />
+                                    <Label x:Name="ProgressLabel" 
+                                           Text="Analyzing image..." 
+                                           Style="{StaticResource BodyStyle}"
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" />
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Results Section -->
+                <Frame x:Name="ResultsFrame" 
+                       Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="False">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="📊" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Detection Results" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <!-- Enhanced Overall Result -->
+                        <Frame x:Name="OverallResultFrame" 
+                               BackgroundColor="{StaticResource BackgroundTertiary}" 
+                               CornerRadius="16" 
+                               Padding="24" 
+                               HasShadow="False">
+                            <StackLayout Spacing="16">
+                                <Label x:Name="OverallResultLabel" 
+                                       Style="{StaticResource BodyLargeStyle}"
+                                       FontSize="20"
+                                       FontAttributes="Bold" 
+                                       HorizontalOptions="Center" />
+                                <Label x:Name="SummaryLabel" 
+                                       Style="{StaticResource BodyStyle}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center" />
+                                
+                                <!-- Improved metrics layout -->
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="20" RowSpacing="12">
+                                    <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                                        <Label Text="🎯" FontSize="16" VerticalOptions="Center" />
+                                        <Label Text="Risk Level:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                        <Label x:Name="RiskLevelLabel" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                    </StackLayout>
+
+                                    <StackLayout Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                                        <Label Text="📈" FontSize="16" VerticalOptions="Center" />
+                                        <Label Text="Confidence:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                        <Label x:Name="ConfidenceLabel" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                    </StackLayout>
+
+                                    <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" Spacing="8" HorizontalOptions="Center">
+                                        <Label Text="⏱️" FontSize="16" VerticalOptions="Center" />
+                                        <Label Text="Processing Time:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                        <Label x:Name="ProcessingTimeLabel" Style="{StaticResource BodyStyle}" />
+                                    </StackLayout>
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Enhanced Detailed Test Results -->
+                        <StackLayout Spacing="16">
+                            <StackLayout Orientation="Horizontal" Spacing="8">
+                                <Label Text="🧪" FontSize="18" VerticalOptions="Center" />
+                                <Label Text="Detailed Test Results" 
+                                       Style="{StaticResource BodyLargeStyle}"
+                                       FontAttributes="Bold" 
+                                       VerticalOptions="Center" />
+                            </StackLayout>
+                            <StackLayout x:Name="DetailedResultsPanel" Spacing="12" />
+                        </StackLayout>
+                        
+                        <!-- Enhanced Export Button -->
+                        <Button x:Name="ExportButton"
+                                Text="📄 Export Detailed Report"
+                                Style="{StaticResource WarningButtonStyle}"
+                                HeightRequest="52"
+                                Clicked="OnExportClicked" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Enhanced Help Section -->
+                <Frame Style="{StaticResource ModernCardStyle}">
+                    <StackLayout Spacing="16">
+                        <StackLayout Orientation="Horizontal" Spacing="12">
+                            <Label Text="ℹ️" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="About LSB Detection" 
+                                   Style="{StaticResource BodyLargeStyle}"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        <Label Style="{StaticResource BodyStyle}">
+                            <Label.Text>
+This tool uses advanced statistical methods to detect LSB (Least Significant Bit) steganography:
+
+• Chi-Square Test: Analyzes randomness in LSB distribution
+• Sample Pair Analysis: Detects correlations between adjacent pixels  
+• RS Analysis: Examines block pattern irregularities
+• Entropy Analysis: Measures LSB plane randomness
+• Histogram Analysis: Identifies suspicious value distributions
+
+The system requires multiple tests to flag suspicious content, reducing false positives while maintaining high detection accuracy.
+                            </Label.Text>
+                        </Label>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+
+            <!-- Modern Footer -->
+            <StackLayout Grid.Row="2" Spacing="8" Margin="0,32,0,0">
+                <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" Margin="0,0,0,16" />
+                <Label Text="LSB Steganography Detector v2.0" 
+                       Style="{StaticResource CaptionStyle}"
+                       HorizontalOptions="Center"
+                       FontAttributes="Bold" />
+                <Label Text="Statistical Analysis • Real-time Detection • Export Reports" 
+                       Style="{StaticResource CaptionStyle}"
+                       HorizontalOptions="Center" />
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage> 

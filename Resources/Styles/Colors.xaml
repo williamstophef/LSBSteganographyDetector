@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
+
+    <!-- Modern Solid Colors -->
+    <Color x:Key="Primary">#6366F1</Color>
+    <Color x:Key="PrimaryLight">#818CF8</Color>
+    <Color x:Key="PrimaryDark">#4338CA</Color>
+    
+    <Color x:Key="Secondary">#EC4899</Color>
+    <Color x:Key="Accent">#10B981</Color>
+    <Color x:Key="Warning">#F59E0B</Color>
+    <Color x:Key="Error">#EF4444</Color>
+    <Color x:Key="Success">#10B981</Color>
+    <Color x:Key="Info">#3B82F6</Color>
+    
+    <!-- Neutral Colors -->
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="Gray50">#18181B</Color>
+    <Color x:Key="Gray100">#27272A</Color>
+    <Color x:Key="Gray200">#3F3F46</Color>
+    <Color x:Key="Gray300">#52525B</Color>
+    <Color x:Key="Gray400">#71717A</Color>
+    <Color x:Key="Gray500">#A1A1AA</Color>
+    <Color x:Key="Gray600">#D4D4D8</Color>
+    <Color x:Key="Gray700">#E4E4E7</Color>
+    <Color x:Key="Gray800">#F4F4F5</Color>
+    <Color x:Key="Gray900">#FAFAFA</Color>
+    
+    <!-- Shimmer and Glow Colors -->
+    <Color x:Key="ShimmerLight">#2A2A3A</Color>
+    <Color x:Key="ShimmerDark">#1E1E2E</Color>
+    <Color x:Key="GlowPrimary">#A5B4FC</Color>
+    <Color x:Key="GlowSecondary">#F3E8FF</Color>
+    
+    <!-- Background Colors -->
+    <Color x:Key="BackgroundPrimary">#1E1E2E</Color>
+    <Color x:Key="BackgroundSecondary">#2A2A3A</Color>
+    <Color x:Key="BackgroundTertiary">#363649</Color>
+    <Color x:Key="BackgroundCard">#252536</Color>
+    
+    <!-- Text Colors -->
+    <Color x:Key="TextPrimary">#F8F9FA</Color>
+    <Color x:Key="TextSecondary">#D4D4D8</Color>
+    <Color x:Key="TextTertiary">#A1A1AA</Color>
+    <Color x:Key="TextInverse">#FFFFFF</Color>
+    
+    <!-- Surface Colors -->
+    <Color x:Key="Surface">#2A2A3A</Color>
+    <Color x:Key="Outline">#404040</Color>
+    
+    <!-- Additional Colors for Effects -->
+    <Color x:Key="ErrorLight">#F87171</Color>
+    
+    <!-- Legacy Compatibility -->
+    <Color x:Key="Tertiary">#8B5CF6</Color>
+    <Color x:Key="Magenta">#EC4899</Color>
+    <Color x:Key="MidnightBlue">#1E1B4B</Color>
+    <Color x:Key="OffBlack">#0F172A</Color>
+
+    <!-- Solid Color Brushes -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource Warning}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource Error}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource Info}"/>
+    
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+    
+    <SolidColorBrush x:Key="Gray50Brush" Color="{StaticResource Gray50}"/>
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
+    <SolidColorBrush x:Key="Gray700Brush" Color="{StaticResource Gray700}"/>
+    <SolidColorBrush x:Key="Gray800Brush" Color="{StaticResource Gray800}"/>
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
+    
+    <!-- Background Brushes -->
+    <SolidColorBrush x:Key="BackgroundPrimaryBrush" Color="{StaticResource BackgroundPrimary}"/>
+    <SolidColorBrush x:Key="BackgroundSecondaryBrush" Color="{StaticResource BackgroundSecondary}"/>
+    <SolidColorBrush x:Key="BackgroundTertiaryBrush" Color="{StaticResource BackgroundTertiary}"/>
+    <SolidColorBrush x:Key="BackgroundCardBrush" Color="{StaticResource BackgroundCard}"/>
+
+    <!-- Modern Gradient Brushes -->
+    
+    <!-- Primary Gradients -->
+    <LinearGradientBrush x:Key="PrimaryGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#6366F1" Offset="0.0" />
+        <GradientStop Color="#8B5CF6" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="SecondaryGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#EC4899" Offset="0.0" />
+        <GradientStop Color="#F97316" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="SuccessGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#10B981" Offset="0.0" />
+        <GradientStop Color="#34D399" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="WarningGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#F59E0B" Offset="0.0" />
+        <GradientStop Color="#FBBF24" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="ErrorGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#EF4444" Offset="0.0" />
+        <GradientStop Color="#F87171" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <!-- Background Gradients -->
+    <LinearGradientBrush x:Key="AppBackgroundGradient" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1E1E2E" Offset="0.0" />
+        <GradientStop Color="#2A2A3A" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="CardBackgroundGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#252536" Offset="0.0" />
+        <GradientStop Color="#2A2A3A" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="HeaderGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#6366F1" Offset="0.0" />
+        <GradientStop Color="#8B5CF6" Offset="0.5" />
+        <GradientStop Color="#EC4899" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <!-- Shimmer Gradients for Animations -->
+    <LinearGradientBrush x:Key="ShimmerGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="Transparent" Offset="0.0" />
+        <GradientStop Color="#40FFFFFF" Offset="0.5" />
+        <GradientStop Color="Transparent" Offset="1.0" />
+    </LinearGradientBrush>
+    
+    <LinearGradientBrush x:Key="GlowGradient" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#10A5B4FC" Offset="0.0" />
+        <GradientStop Color="#30A5B4FC" Offset="0.5" />
+        <GradientStop Color="#10A5B4FC" Offset="1.0" />
+    </LinearGradientBrush>
+
+</ResourceDictionary>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="LSBSteganographyDetector.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:LSBSteganographyDetector"
+    xmlns:views="clr-namespace:LSBSteganographyDetector.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="LSB Steganography Detector"
+    Shell.BackgroundColor="{StaticResource BackgroundCard}"
+    Shell.TabBarBackgroundColor="{StaticResource BackgroundCard}"
+    Shell.TabBarForegroundColor="{StaticResource Primary}"
+    Shell.TabBarTitleColor="{StaticResource Primary}"
+    Shell.TabBarUnselectedColor="{StaticResource Gray500}">
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <!-- Enhanced Tab Bar Item Style -->
+            <Style TargetType="Tab">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource BackgroundCard}" />
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.TitleColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.UnselectedColor" Value="{StaticResource Gray500}" />
+            </Style>
+            
+            <!-- Modern Tab Bar Style -->
+            <Style TargetType="TabBar">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource BackgroundCard}" />
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource Primary}" />
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <TabBar Shell.TabBarBackgroundColor="{StaticResource BackgroundCard}">
+        <Tab Title="LSB Detector" 
+             Icon="🔍"
+             Shell.ForegroundColor="{StaticResource Primary}"
+             Shell.TitleColor="{StaticResource Primary}">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+        </Tab>
+        
+        <Tab Title="Stego Tools" 
+             Icon="🔐"
+             Shell.ForegroundColor="{StaticResource Primary}"
+             Shell.TitleColor="{StaticResource Primary}">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:SteganographyToolsPage}"
+                Route="StegoTools" />
+        </Tab>
+    </TabBar>
+
+</Shell> 
