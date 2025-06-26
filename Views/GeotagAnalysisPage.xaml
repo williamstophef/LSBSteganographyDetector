@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="LSBSteganographyDetector.Views.GeotagAnalysisPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Location Analysis"
+             BackgroundColor="{StaticResource BackgroundSecondary}">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,*" Padding="24">
+            
+            <!-- Modern Header with Gradient Background -->
+            <Frame Grid.Row="0" Style="{StaticResource GradientCardStyle}" Margin="0,0,0,24">
+                <StackLayout Spacing="16">
+                    <Label Text="📍 Geolocation Analysis" 
+                           Style="{StaticResource HeadlineStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           FontSize="28" />
+                    <Label Text="Extract GPS metadata and visualize image locations on an interactive map" 
+                           Style="{StaticResource BodyStyle}"
+                           TextColor="{StaticResource TextInverse}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           Opacity="0.9" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Main Content -->
+            <StackLayout Grid.Row="1" Spacing="24">
+                
+                <!-- Selection Mode Section -->
+                <Frame Style="{StaticResource ElevatedCardStyle}">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="📂" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Choose Analysis Mode" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="16">
+                            <!-- Single Image Mode -->
+                            <Button x:Name="SelectImageButton"
+                                    Grid.Column="0" Grid.Row="0"
+                                    Text="🖼️ Single Image"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    HeightRequest="60"
+                                    Clicked="OnSelectImageClicked" />
+                            
+                            <!-- Batch Folder Mode -->
+                            <Button x:Name="SelectFolderButton"
+                                    Grid.Column="1" Grid.Row="0"
+                                    Text="📁 Batch Folder"
+                                    Style="{StaticResource WarningButtonStyle}"
+                                    HeightRequest="60"
+                                    Clicked="OnSelectFolderClicked" />
+                            
+                            <!-- Mode descriptions -->
+                            <Label Grid.Column="0" Grid.Row="1"
+                                   Text="Extract GPS data from a single image file"
+                                   Style="{StaticResource CaptionStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                            
+                            <Label Grid.Column="1" Grid.Row="1"
+                                   Text="Process entire folder and map all geotagged images"
+                                   Style="{StaticResource CaptionStyle}"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </Grid>
+                        
+                        <!-- Selected Path Info -->
+                        <StackLayout x:Name="PathInfoPanel" IsVisible="False" Spacing="12">
+                            <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" Margin="0,8" />
+                            <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                                <Label Text="📄" FontSize="16" VerticalOptions="Center" />
+                                <Label Text="Selected:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                <Label x:Name="SelectedPathLabel" 
+                                       Style="{StaticResource BodyStyle}"
+                                       HorizontalOptions="FillAndExpand" />
+                            </StackLayout>
+                            <Label x:Name="ImageCountLabel" 
+                                   Style="{StaticResource CaptionStyle}"
+                                   HorizontalOptions="Center" />
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Analysis Section -->
+                <Frame x:Name="AnalysisFrame" 
+                       Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="False">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="🗺️" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Location Analysis" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <Button x:Name="AnalyzeButton"
+                                Text="🚀 Extract GPS Metadata"
+                                Style="{StaticResource SuccessButtonStyle}"
+                                HeightRequest="56"
+                                FontSize="18"
+                                Clicked="OnAnalyzeClicked" />
+                        
+                        <!-- Enhanced Progress Indicator -->
+                        <StackLayout x:Name="ProgressPanel" IsVisible="False" Spacing="16">
+                            <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
+                                   CornerRadius="12" 
+                                   Padding="24"
+                                   HasShadow="False">
+                                <StackLayout Spacing="12">
+                                    <ActivityIndicator x:Name="ProgressIndicator" 
+                                                       IsRunning="False" 
+                                                       Color="{StaticResource Primary}"
+                                                       WidthRequest="40"
+                                                       HeightRequest="40" />
+                                    <Label x:Name="ProgressLabel" 
+                                           Text="Extracting GPS metadata..." 
+                                           Style="{StaticResource BodyStyle}"
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" />
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Map and Results Section -->
+                <Frame x:Name="ResultsFrame" 
+                       Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="False">
+                    <StackLayout Spacing="20">
+                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
+                            <Label Text="🌍" FontSize="24" VerticalOptions="Center" />
+                            <Label Text="Location Map" 
+                                   Style="{StaticResource SubheadlineStyle}"
+                                   FontSize="22"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        
+                        <!-- Analysis Summary -->
+                        <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
+                               CornerRadius="16" 
+                               Padding="20" 
+                               HasShadow="False">
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16">
+                                <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                                    <Label x:Name="TotalImagesLabel" 
+                                           Text="0" 
+                                           Style="{StaticResource SubheadlineStyle}"
+                                           FontSize="24" 
+                                           HorizontalOptions="Center" 
+                                           TextColor="{StaticResource Primary}" />
+                                    <Label Text="Total Images" 
+                                           Style="{StaticResource CaptionStyle}"
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" />
+                                </StackLayout>
+                                
+                                <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                                    <Label x:Name="GeotaggedImagesLabel" 
+                                           Text="0" 
+                                           Style="{StaticResource SubheadlineStyle}"
+                                           FontSize="24" 
+                                           HorizontalOptions="Center" 
+                                           TextColor="{StaticResource Success}" />
+                                    <Label Text="With GPS Data" 
+                                           Style="{StaticResource CaptionStyle}"
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" />
+                                </StackLayout>
+                                
+                                <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                                    <Label x:Name="LocationsLabel" 
+                                           Text="0" 
+                                           Style="{StaticResource SubheadlineStyle}"
+                                           FontSize="24" 
+                                           HorizontalOptions="Center" 
+                                           TextColor="{StaticResource Warning}" />
+                                    <Label Text="Unique Locations" 
+                                           Style="{StaticResource CaptionStyle}"
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" />
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+
+                        <!-- Map Display Area -->
+                        <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
+                               CornerRadius="16" 
+                               Padding="12" 
+                               HasShadow="False"
+                               HeightRequest="400">
+                            <Grid>
+                                <!-- Web View for Map -->
+                                <WebView x:Name="MapWebView" 
+                                         BackgroundColor="{StaticResource BackgroundTertiary}"
+                                         IsVisible="False" />
+                                
+                                <!-- Placeholder for Map Loading -->
+                                <StackLayout x:Name="MapPlaceholder" 
+                                             IsVisible="True"
+                                             HorizontalOptions="Center" 
+                                             VerticalOptions="Center"
+                                             Spacing="16">
+                                    <Label Text="🗺️" FontSize="64" HorizontalOptions="Center" />
+                                    <Label Text="Interactive Mapbox Map Will Appear Here" 
+                                           Style="{StaticResource SubheadlineStyle}"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="GPS locations will be plotted as interactive pins with Mapbox mapping" 
+                                           Style="{StaticResource BodyStyle}"
+                                           HorizontalOptions="Center" 
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Multiple map styles available: Streets, Satellite, Light, Dark, Outdoors" 
+                                           Style="{StaticResource CaptionStyle}"
+                                           HorizontalOptions="Center" 
+                                           HorizontalTextAlignment="Center"
+                                           TextColor="{StaticResource TextTertiary}" />
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+
+                        <!-- Export Section -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Button x:Name="ExportReportButton"
+                                    Grid.Column="0"
+                                    Text="📄 Export Report"
+                                    Style="{StaticResource WarningButtonStyle}"
+                                    HeightRequest="52"
+                                    Clicked="OnExportReportClicked" />
+                            
+                            <Button x:Name="ExportMapButton"
+                                    Grid.Column="1"
+                                    Text="🗺️ Export Map"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    HeightRequest="52"
+                                    Clicked="OnExportMapClicked" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Enhanced Help Section -->
+                <Frame Style="{StaticResource ModernCardStyle}">
+                    <StackLayout Spacing="16">
+                        <StackLayout Orientation="Horizontal" Spacing="12">
+                            <Label Text="ℹ️" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="About GPS Metadata Analysis" 
+                                   Style="{StaticResource BodyLargeStyle}"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                        <Label Style="{StaticResource BodyStyle}">
+                            <Label.Text>
+This tool extracts GPS coordinates and timestamp data from image EXIF metadata:
+
+• GPS Coordinates: Precise latitude/longitude where photo was taken
+• Timestamp Analysis: When the photo was captured (local time)
+• Interactive Mapping: Mapbox-powered map showing all geotagged images
+• Multiple Map Styles: Streets, Satellite, Light, Dark, and Outdoors views
+• Enhanced Markers: Numbered pins with detailed popup information
+• Reverse Geocoding: Convert coordinates to readable addresses
+• Export Reports: Comprehensive location data for investigation
+
+Supported formats: JPEG, TIFF, and other EXIF-enabled image types.
+Privacy Note: Only images with GPS metadata will be displayed on the map.
+                            </Label.Text>
+                        </Label>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage> 

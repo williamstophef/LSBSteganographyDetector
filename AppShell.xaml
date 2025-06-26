@@ -49,6 +49,15 @@
                 ContentTemplate="{DataTemplate views:SteganographyToolsPage}"
                 Route="StegoTools" />
         </Tab>
+        
+        <Tab Title="Location Map" 
+             Icon="📍"
+             Shell.ForegroundColor="{StaticResource Primary}"
+             Shell.TitleColor="{StaticResource Primary}">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:GeotagAnalysisPage}"
+                Route="LocationMap" />
+        </Tab>
     </TabBar>
 
 </Shell> 

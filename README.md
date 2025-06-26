@@ -10,7 +10,8 @@ A complete .NET MAUI application that uses proven statistical methods to detect 
 
 ✅ **Real LSB Detection** - Uses statistical methods that actually work  
 ✅ **Cross-Platform** - Runs on Android, iOS, Windows, macOS  
-✅ **5 Detection Algorithms** - Chi-square, Sample Pair, RS Analysis, Entropy, Histogram  
+✅ **6 Detection Algorithms** - Chi-square, Sample Pair, RS Analysis, Entropy, Histogram, Python LSB  
+✅ **Mathematical Formulas** - Complete mathematical documentation for each algorithm  
 ✅ **Beautiful UI** - Modern Material Design interface  
 ✅ **Detailed Reports** - Comprehensive analysis with exportable results  
 ✅ **Fast Performance** - Optimized ImageSharp processing  
@@ -51,31 +52,147 @@ Unlike deep learning approaches that fail with real LSB steganography (±1 pixel
 - **Purpose**: Tests if LSB distribution is truly random
 - **How**: Compares observed vs expected frequency of 0s and 1s in LSB plane
 - **Detects**: Non-random patterns typical of embedded messages
-- **Threshold**: 3.84 (95% confidence level)
+- **Threshold**: 9.0 (enhanced conservative threshold)
+
+**Mathematical Formula:**
+```
+χ² = Σ((Oᵢ - Eᵢ)² / Eᵢ)
+
+Where:
+- Oᵢ = Observed frequency of LSB value i (0 or 1)
+- Eᵢ = Expected frequency = total_samples / 2
+- LSB extracted from R, G, B channels of each pixel
+- H₀: LSBs are randomly distributed
+- H₁: LSBs show non-random patterns (steganography)
+```
 
 ### **2. Sample Pair Analysis** 🔗
 - **Purpose**: Detects correlations between adjacent pixels
 - **How**: Analyzes LSB relationships in neighboring pixels
 - **Detects**: Artificial correlations introduced by steganography
-- **Threshold**: 0.1 deviation from expected 0.5 ratio
+- **Threshold**: 0.25 deviation from expected 0.5 ratio
+
+**Mathematical Formula:**
+```
+Deviation = |SP_ratio - 0.5|
+
+Where:
+- SP_ratio = same_pairs / total_pairs
+- same_pairs = count of adjacent pixels with identical LSBs
+- total_pairs = total adjacent pixel pairs analyzed
+- Natural images: SP_ratio ≈ 0.5 (random distribution)
+- Steganography: SP_ratio deviates significantly from 0.5
+```
 
 ### **3. RS (Regular/Singular) Analysis** 📐
 - **Purpose**: Examines block pattern irregularities
 - **How**: Categorizes image blocks by variance characteristics
 - **Detects**: Disruption of natural block patterns
-- **Threshold**: 0.05 deviation in RS ratio
+- **Threshold**: 0.02 deviation in RS ratio
+
+**Mathematical Formula:**
+```
+RS_deviation = |(R - S) / T|
+
+Where:
+- R = Regular blocks (variance < 10)
+- S = Singular blocks (variance > 100)
+- T = Total blocks analyzed
+- Block size = 4×4 pixels
+- Variance = Σ(xᵢ - μ)² / n
+
+Block Classification:
+- Regular: Low variance (smooth regions)
+- Singular: High variance (textured regions)
+- Steganography disrupts natural R/S balance
+```
 
 ### **4. Entropy Analysis** 🌊
 - **Purpose**: Measures randomness in LSB plane
 - **How**: Calculates information entropy of LSB bits
 - **Detects**: Unusually high entropy (too random for natural images)
-- **Threshold**: 0.99 entropy level
+- **Threshold**: 0.997 entropy level
+
+**Mathematical Formula:**
+```
+H(X) = -Σ p(xᵢ) × log₂(p(xᵢ))
+
+Where:
+- X = LSB sequence from R, G, B channels
+- p(xᵢ) = probability of LSB value xᵢ (0 or 1)
+- H(X) ∈ [0, 1] for binary data
+- Natural images: H(X) < 0.997
+- Perfect steganography: H(X) → 1.0 (maximum entropy)
+```
 
 ### **5. Histogram Analysis** 📈
 - **Purpose**: Identifies suspicious value distributions
 - **How**: Analyzes even/odd pixel value pair ratios
 - **Detects**: Artificial patterns in pixel value distribution
-- **Threshold**: 0.02 suspicious pattern ratio
+- **Threshold**: 0.1 suspicious pattern ratio
+
+**Mathematical Formula:**
+```
+Suspicious_ratio = Suspicious_patterns / 128
+
+For each even/odd pair (i, i+1) where i ∈ [0, 254]:
+- Ratio = |count(i) / (count(i) + count(i+1)) - 0.5|
+- If Ratio > 0.3: increment Suspicious_patterns
+
+Where:
+- count(i) = frequency of pixel value i in histogram
+- 128 = total even/odd pairs analyzed
+- Natural images: even/odd ratios ≈ 0.5
+- LSB embedding creates asymmetric distributions
+```
+
+### **6. Python LSB Pattern Detection** 🐍
+- **Purpose**: Detects Python-style LSB embedding patterns
+- **How**: Analyzes cross-channel correlation and repetition
+- **Detects**: Python tools that embed identical data in R, G, B channels
+- **Threshold**: 0.30 combined score
+
+**Mathematical Formula:**
+```
+Combined_score = (Correlation × 0.6) + (Repetition × 0.4)
+
+Channel Correlation:
+Correlation = matches / total_comparisons
+Where matches = count(LSB_R[i] = LSB_G[i] = LSB_B[i])
+
+Pattern Repetition:
+Repetition = max(pattern_matches / pattern_checks)
+For pattern lengths: 64-120 bits (8-15 characters)
+
+Python Indicators:
+- High correlation across R, G, B channels
+- Repeating message patterns
+- Sequential LSB extraction order
+```
+
+### **Overall Detection Algorithm** ⚖️
+
+The final detection uses a **weighted scoring system** to combine all test results:
+
+**Mathematical Formula:**
+```
+Overall_Confidence = Σ(Weight_i × Test_i) / Σ(Weight_i)
+
+Test Weights (optimized for accuracy):
+- Chi-Square Test: 3.5    (most reliable indicator)
+- Python LSB Pattern: 2.0 (highly specific)
+- RS Analysis: 1.0        (moderately reliable)
+- Sample Pair: 0.6        (prone to texture noise)
+- Entropy: 0.4            (often misleading)
+- Histogram: 0.3          (high false positive rate)
+
+Detection Criteria:
+- High Entropy (≥0.996) + 2+ suspicious tests → DETECTED
+- Python Pattern + High Entropy → DETECTED  
+- PNG files: 4+ tests suspicious + confidence >80%
+- JPEG files: 4+ tests suspicious + confidence >85%
+- Other formats: 3+ tests suspicious + confidence >75%
+```
 
 ---
 
@@ -215,9 +332,12 @@ This detector is specifically for **LSB steganography**. It will NOT detect:
 ### **Adjusting Detection Sensitivity**
 Modify thresholds in `StatisticalLSBDetector.cs`:
 ```csharp
-private const double CHI_SQUARE_THRESHOLD = 3.84;  // Lower = more sensitive
-private const double SAMPLE_PAIR_THRESHOLD = 0.1;  // Lower = more sensitive
-// ... etc
+private const double CHI_SQUARE_THRESHOLD = 9.0;   // Lower = more sensitive
+private const double SAMPLE_PAIR_THRESHOLD = 0.25; // Lower = more sensitive  
+private const double RS_THRESHOLD = 0.02;          // Lower = more sensitive
+private const double ENTROPY_THRESHOLD = 0.997;    // Lower = more sensitive
+private const double HISTOGRAM_THRESHOLD = 0.1;    // Lower = more sensitive
+private const double PYTHON_LSB_THRESHOLD = 0.30;  // Lower = more sensitive
 ```
 
 ### **Adding New Tests**
@@ -255,8 +375,11 @@ private const double SAMPLE_PAIR_THRESHOLD = 0.1;  // Lower = more sensitive
 
 Created for real-world LSB steganography detection. Based on established research and statistical methods.
 
-**Research References**:
-- Fridrich, J., et al. "Reliable detection of LSB steganography in color and grayscale images." (2001)
-- Westfeld, A., & Pfitzmann, A. "Attacks on steganographic systems." (1999)
-- Dumitrescu, S., et al. "Detection of LSB steganography via sample pair analysis." (2003)
+**Research References & Mathematical Foundations**:
+- **Chi-Square Test**: Westfeld, A., & Pfitzmann, A. "Attacks on steganographic systems." (1999)
+- **Sample Pair Analysis**: Dumitrescu, S., et al. "Detection of LSB steganography via sample pair analysis." (2003)
+- **RS Analysis**: Fridrich, J., et al. "Reliable detection of LSB steganography in color and grayscale images." (2001)
+- **Entropy Analysis**: Shannon, C.E. "A Mathematical Theory of Communication." Bell System Technical Journal (1948)
+- **Histogram Analysis**: Ker, A.D. "Improved detection of LSB steganography in grayscale images." (2004)
+- **Pattern Detection**: Enhanced algorithms developed for modern Python-based steganography tools
 
