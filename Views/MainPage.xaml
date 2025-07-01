@@ -40,20 +40,18 @@
                         
                         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="16">
                             <!-- Single Image Mode -->
-                            <Button x:Name="SelectImageButton"
-                                    Grid.Column="0" Grid.Row="0"
+                            <Button Grid.Column="0" Grid.Row="0"
                                     Text="🖼️ Single Image"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     HeightRequest="60"
-                                    Clicked="OnSelectImageClicked" />
+                                    Command="{Binding SelectImageCommand}" />
                             
                             <!-- Batch Folder Mode -->
-                            <Button x:Name="SelectFolderButton"
-                                    Grid.Column="1" Grid.Row="0"
+                            <Button Grid.Column="1" Grid.Row="0"
                                     Text="📁 Batch Folder"
                                     Style="{StaticResource DangerButtonStyle}"
                                     HeightRequest="60"
-                                    Clicked="OnSelectFolderClicked" />
+                                    Command="{Binding SelectFolderCommand}" />
                             
                             <!-- Mode descriptions -->
                             <Label Grid.Column="0" Grid.Row="1"
@@ -70,17 +68,18 @@
                         </Grid>
                         
                         <!-- Selected Image Info with enhanced styling -->
-                        <StackLayout x:Name="ImageInfoPanel" IsVisible="False" Spacing="16">
+                        <StackLayout IsVisible="{Binding ShowImageInfo}" Spacing="16">
                             <BoxView HeightRequest="1" BackgroundColor="{StaticResource Outline}" Margin="0,8" />
-                            <Label x:Name="SelectedImageLabel" 
+                            <Label Text="{Binding SelectedImageLabel}" 
                                    Style="{StaticResource BodyLargeStyle}"
                                    FontAttributes="Bold" 
                                    HorizontalOptions="Center" />
                             <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                                    CornerRadius="16" 
                                    Padding="16"
-                                   HasShadow="False">
-                                <Image x:Name="PreviewImage" 
+                                   HasShadow="False"
+                                   IsVisible="{Binding ShowPreviewImage}">
+                                <Image Source="{Binding PreviewImageSource}" 
                                        HeightRequest="240" 
                                        WidthRequest="240" 
                                        Aspect="AspectFit" />
@@ -90,9 +89,8 @@
                 </Frame>
 
                 <!-- Analysis Section -->
-                <Frame x:Name="AnalysisFrame" 
-                       Style="{StaticResource ElevatedCardStyle}"
-                       IsVisible="False">
+                <Frame Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="{Binding ShowAnalysisSection}">
                     <StackLayout Spacing="20">
                         <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
                             <Label Text="🔬" FontSize="24" VerticalOptions="Center" />
@@ -102,27 +100,24 @@
                                    VerticalOptions="Center" />
                         </StackLayout>
                         
-                        <Button x:Name="AnalyzeButton"
-                                Text="🚀 Start Analysis"
+                        <Button Text="🚀 Start Analysis"
                                 Style="{StaticResource SuccessButtonStyle}"
                                 HeightRequest="56"
                                 FontSize="18"
-                                Clicked="OnAnalyzeClicked" />
+                                Command="{Binding AnalyzeCommand}" />
                         
                         <!-- Enhanced Progress Indicator -->
-                        <StackLayout x:Name="ProgressPanel" IsVisible="False" Spacing="16">
+                        <StackLayout IsVisible="{Binding ShowProgress}" Spacing="16">
                             <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                                    CornerRadius="12" 
                                    Padding="24"
                                    HasShadow="False">
                                 <StackLayout Spacing="12">
-                                    <ActivityIndicator x:Name="ProgressIndicator" 
-                                                       IsRunning="False" 
+                                    <ActivityIndicator IsRunning="{Binding IsBusy}" 
                                                        Color="{StaticResource Primary}"
                                                        WidthRequest="40"
                                                        HeightRequest="40" />
-                                    <Label x:Name="ProgressLabel" 
-                                           Text="Analyzing image..." 
+                                    <Label Text="{Binding ProgressText}" 
                                            Style="{StaticResource BodyStyle}"
                                            HorizontalOptions="Center" 
                                            FontAttributes="Bold" />
@@ -133,9 +128,8 @@
                 </Frame>
 
                 <!-- Results Section -->
-                <Frame x:Name="ResultsFrame" 
-                       Style="{StaticResource ElevatedCardStyle}"
-                       IsVisible="False">
+                <Frame Style="{StaticResource ElevatedCardStyle}"
+                       IsVisible="{Binding ShowResults}">
                     <StackLayout Spacing="20">
                         <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
                             <Label Text="📊" FontSize="24" VerticalOptions="Center" />
@@ -146,18 +140,17 @@
                         </StackLayout>
                         
                         <!-- Enhanced Overall Result -->
-                        <Frame x:Name="OverallResultFrame" 
-                               BackgroundColor="{StaticResource BackgroundTertiary}" 
+                        <Frame BackgroundColor="{Binding OverallResultColor}" 
                                CornerRadius="16" 
                                Padding="24" 
                                HasShadow="False">
                             <StackLayout Spacing="16">
-                                <Label x:Name="OverallResultLabel" 
+                                <Label Text="{Binding OverallResultText}" 
                                        Style="{StaticResource BodyLargeStyle}"
                                        FontSize="20"
                                        FontAttributes="Bold" 
                                        HorizontalOptions="Center" />
-                                <Label x:Name="SummaryLabel" 
+                                <Label Text="{Binding SummaryText}" 
                                        Style="{StaticResource BodyStyle}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center" />
@@ -167,19 +160,19 @@
                                     <StackLayout Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="8">
                                         <Label Text="🎯" FontSize="16" VerticalOptions="Center" />
                                         <Label Text="Risk Level:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
-                                        <Label x:Name="RiskLevelLabel" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                        <Label Text="{Binding RiskLevel}" Style="{StaticResource BodyStyle}" FontAttributes="Bold" TextColor="{Binding RiskLevelColor}" />
                                     </StackLayout>
 
                                     <StackLayout Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8">
                                         <Label Text="📈" FontSize="16" VerticalOptions="Center" />
                                         <Label Text="Confidence:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
-                                        <Label x:Name="ConfidenceLabel" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Confidence}" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
                                     </StackLayout>
 
                                     <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" Spacing="8" HorizontalOptions="Center">
                                         <Label Text="⏱️" FontSize="16" VerticalOptions="Center" />
                                         <Label Text="Processing Time:" Style="{StaticResource BodyStyle}" FontAttributes="Bold" />
-                                        <Label x:Name="ProcessingTimeLabel" Style="{StaticResource BodyStyle}" />
+                                        <Label Text="{Binding ProcessingTime}" Style="{StaticResource BodyStyle}" />
                                     </StackLayout>
                                 </Grid>
                             </StackLayout>
@@ -194,15 +187,58 @@
                                        FontAttributes="Bold" 
                                        VerticalOptions="Center" />
                             </StackLayout>
-                            <StackLayout x:Name="DetailedResultsPanel" Spacing="12" />
+                            
+                            <CollectionView ItemsSource="{Binding TestResults}" BackgroundColor="Transparent">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame BackgroundColor="{Binding BackgroundColor}" 
+                                               BorderColor="{Binding BorderColor}"
+                                               CornerRadius="8"
+                                               Padding="16" 
+                                               Margin="0,4" 
+                                               HasShadow="False">
+                                            <StackLayout Spacing="8">
+                                                <!-- Test name and result -->
+                                                <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                                                    <Label Text="{Binding TestName}" 
+                                                           Style="{StaticResource BodyLargeStyle}"
+                                                           FontAttributes="Bold"
+                                                           HorizontalOptions="Start" />
+                                                    <Label Text="{Binding StatusText}" 
+                                                           Style="{StaticResource CaptionStyle}"
+                                                           FontAttributes="Bold"
+                                                           TextColor="{Binding StatusColor}"
+                                                           HorizontalOptions="End" />
+                                                </StackLayout>
+                                                
+                                                <!-- Score information -->
+                                                <StackLayout Orientation="Horizontal" Spacing="15">
+                                                    <Label Text="{Binding Score, StringFormat='Score: {0:F4}'}" 
+                                                           Style="{StaticResource CaptionStyle}" />
+                                                    <Label Text="{Binding Threshold, StringFormat='Threshold: {0:F4}'}" 
+                                                           Style="{StaticResource CaptionStyle}" />
+                                                </StackLayout>
+                                                
+                                                <!-- Description -->
+                                                <Label Text="{Binding Description}" 
+                                                       Style="{StaticResource CaptionStyle}"
+                                                       FontAttributes="Italic" />
+                                                
+                                                <!-- Interpretation -->
+                                                <Label Text="{Binding Interpretation}" 
+                                                       Style="{StaticResource BodyStyle}" />
+                                            </StackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
                         </StackLayout>
                         
                         <!-- Enhanced Export Button -->
-                        <Button x:Name="ExportButton"
-                                Text="📄 Export Detailed Report"
+                        <Button Text="📄 Export Detailed Report"
                                 Style="{StaticResource WarningButtonStyle}"
                                 HeightRequest="52"
-                                Clicked="OnExportClicked" />
+                                Command="{Binding ExportCommand}" />
                     </StackLayout>
                 </Frame>
 

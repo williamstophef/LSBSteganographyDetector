@@ -15,8 +15,7 @@
                            Style="{StaticResource HeadlineStyle}"
                            TextColor="{StaticResource TextInverse}"
                            FontSize="28" />
-                    <Label x:Name="SummaryLabel"
-                           Text="Analysis summary will appear here" 
+                    <Label Text="{Binding SummaryText}" 
                            Style="{StaticResource BodyStyle}"
                            TextColor="{StaticResource TextInverse}"
                            HorizontalOptions="Center"
@@ -46,8 +45,7 @@
                                HasShadow="False">
                             <StackLayout HorizontalOptions="Center" Spacing="8">
                                 <Label Text="📁" FontSize="32" HorizontalOptions="Center" />
-                                <Label x:Name="TotalImagesLabel" 
-                                       Text="0" 
+                                <Label Text="{Binding TotalImagesText}" 
                                        Style="{StaticResource SubheadlineStyle}"
                                        FontSize="24" 
                                        HorizontalOptions="Center" />
@@ -66,8 +64,7 @@
                                HasShadow="False">
                             <StackLayout HorizontalOptions="Center" Spacing="8">
                                 <Label Text="⚠️" FontSize="32" HorizontalOptions="Center" />
-                                <Label x:Name="HighRiskLabel" 
-                                       Text="0" 
+                                <Label Text="{Binding HighRiskText}" 
                                        Style="{StaticResource SubheadlineStyle}"
                                        FontSize="24" 
                                        TextColor="{StaticResource Error}"
@@ -88,8 +85,7 @@
                                HasShadow="False">
                             <StackLayout HorizontalOptions="Center" Spacing="8">
                                 <Label Text="⚡" FontSize="32" HorizontalOptions="Center" />
-                                <Label x:Name="MediumRiskLabel" 
-                                       Text="0" 
+                                <Label Text="{Binding MediumRiskText}" 
                                        Style="{StaticResource SubheadlineStyle}"
                                        FontSize="24" 
                                        TextColor="{StaticResource Warning}"
@@ -110,8 +106,7 @@
                                HasShadow="False">
                             <StackLayout HorizontalOptions="Center" Spacing="8">
                                 <Label Text="✅" FontSize="32" HorizontalOptions="Center" />
-                                <Label x:Name="CleanImagesLabel" 
-                                       Text="0" 
+                                <Label Text="{Binding CleanImagesText}" 
                                        Style="{StaticResource SubheadlineStyle}"
                                        FontSize="24" 
                                        TextColor="{StaticResource Success}"
@@ -138,8 +133,7 @@
                                        Style="{StaticResource BodyLargeStyle}"
                                        FontAttributes="Bold"
                                        VerticalOptions="Center" />
-                                <Label x:Name="ProcessingTimeLabel" 
-                                       Text="0 ms" 
+                                <Label Text="{Binding ProcessingTimeText}" 
                                        Style="{StaticResource BodyLargeStyle}"
                                        FontAttributes="Bold"
                                        TextColor="{StaticResource Primary}"
@@ -155,38 +149,34 @@
                 <StackLayout Spacing="20">
                     <!-- Tab Header -->
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-                        <Button x:Name="HighRiskTab" 
-                                Grid.Column="0"
-                                Text="⚠️ High Risk"
+                        <Button Grid.Column="0"
+                                Text="{Binding HighRiskTabText}"
                                 Style="{StaticResource DangerButtonStyle}"
                                 HeightRequest="45"
                                 FontSize="14"
-                                Clicked="OnHighRiskTabClicked" />
-                        <Button x:Name="MediumRiskTab" 
-                                Grid.Column="1"
-                                Text="⚡ Medium Risk"
+                                Command="{Binding ShowHighRiskTabCommand}" />
+                        <Button Grid.Column="1"
+                                Text="{Binding MediumRiskTabText}"
                                 Style="{StaticResource WarningButtonStyle}"
                                 HeightRequest="45"
                                 FontSize="14"
-                                Clicked="OnMediumRiskTabClicked" />
-                        <Button x:Name="CleanTab" 
-                                Grid.Column="2"
-                                Text="✅ Clean"
+                                Command="{Binding ShowMediumRiskTabCommand}" />
+                        <Button Grid.Column="2"
+                                Text="{Binding CleanTabText}"
                                 Style="{StaticResource SuccessButtonStyle}"
                                 HeightRequest="45"
                                 FontSize="14"
-                                Clicked="OnCleanTabClicked" />
+                                Command="{Binding ShowCleanTabCommand}" />
                     </Grid>
 
                     <!-- Tab Content -->
                     <!-- High-Risk Images -->
-                    <StackLayout x:Name="HighRiskContent" IsVisible="True">
-                        <Label x:Name="HighRiskDescriptionLabel"
-                               Text="Images flagged as potentially containing steganographic content" 
+                    <StackLayout IsVisible="{Binding ShowHighRiskContent}">
+                        <Label Text="{Binding HighRiskDescriptionText}" 
                                Style="{StaticResource BodyStyle}"
                                HorizontalTextAlignment="Center" />
                         
-                        <CollectionView x:Name="HighRiskImagesCollection" 
+                        <CollectionView ItemsSource="{Binding HighRiskImages}"
                                         BackgroundColor="Transparent"
                                         SelectionMode="Single"
                                         SelectionChanged="OnImageSelected">
@@ -254,7 +244,7 @@
                         </CollectionView>
                         
                         <!-- Empty State for High-Risk -->
-                        <StackLayout x:Name="EmptyHighRiskPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                        <StackLayout IsVisible="{Binding ShowEmptyHighRisk}" Spacing="16" Margin="40,20">
                             <Label Text="🎉" FontSize="64" HorizontalOptions="Center" />
                             <Label Text="No High-Risk Images Found!" 
                                    Style="{StaticResource SubheadlineStyle}"
@@ -268,12 +258,12 @@
                     </StackLayout>
 
                     <!-- Medium-Risk Images -->
-                    <StackLayout x:Name="MediumRiskContent" IsVisible="False">
+                    <StackLayout IsVisible="{Binding ShowMediumRiskContent}">
                         <Label Text="Images with moderate steganography indicators" 
                                Style="{StaticResource BodyStyle}"
                                HorizontalTextAlignment="Center" />
                         
-                        <CollectionView x:Name="MediumRiskImagesCollection" 
+                        <CollectionView ItemsSource="{Binding MediumRiskImages}"
                                         BackgroundColor="Transparent"
                                         SelectionMode="Single"
                                         SelectionChanged="OnImageSelected">
@@ -341,7 +331,7 @@
                         </CollectionView>
                         
                         <!-- Empty State for Medium-Risk -->
-                        <StackLayout x:Name="EmptyMediumRiskPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                        <StackLayout IsVisible="{Binding ShowEmptyMediumRisk}" Spacing="16" Margin="40,20">
                             <Label Text="⚡" FontSize="64" HorizontalOptions="Center" />
                             <Label Text="No Medium-Risk Images" 
                                    Style="{StaticResource SubheadlineStyle}"
@@ -355,12 +345,12 @@
                     </StackLayout>
 
                     <!-- Clean Images -->
-                    <StackLayout x:Name="CleanContent" IsVisible="False">
+                    <StackLayout IsVisible="{Binding ShowCleanContent}">
                         <Label Text="Images that passed all detection tests" 
                                Style="{StaticResource BodyStyle}"
                                HorizontalTextAlignment="Center" />
                         
-                        <CollectionView x:Name="CleanImagesCollection" 
+                        <CollectionView ItemsSource="{Binding CleanImages}"
                                         BackgroundColor="Transparent"
                                         SelectionMode="Single"
                                         SelectionChanged="OnImageSelected">
@@ -428,7 +418,7 @@
                         </CollectionView>
                         
                         <!-- Empty State for Clean -->
-                        <StackLayout x:Name="EmptyCleanPanel" IsVisible="False" Spacing="16" Margin="40,20">
+                        <StackLayout IsVisible="{Binding ShowEmptyClean}" Spacing="16" Margin="40,20">
                             <Label Text="🔍" FontSize="64" HorizontalOptions="Center" />
                             <Label Text="No Clean Images" 
                                    Style="{StaticResource SubheadlineStyle}"
@@ -446,29 +436,26 @@
             <!-- Enhanced Action Buttons -->
             <StackLayout Grid.Row="3" Spacing="16" Margin="0,24,0,0">
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
-                    <Button x:Name="ExportReportButton"
-                            Grid.Column="0"
+                    <Button Grid.Column="0"
                             Text="📄 Export Report"
                             Style="{StaticResource WarningButtonStyle}"
                             HeightRequest="52"
                             FontSize="14"
-                            Clicked="OnExportReportClicked" />
+                            Command="{Binding ExportReportCommand}" />
                     
-                    <Button x:Name="BackToMainButton"
-                            Grid.Column="1"
+                    <Button Grid.Column="1"
                             Text="🔙 Back to Main"
                             Style="{StaticResource SecondaryButtonStyle}"
                             HeightRequest="52"
                             FontSize="14"
-                            Clicked="OnBackToMainClicked" />
+                            Command="{Binding BackToMainCommand}" />
 
-                    <Button x:Name="ProcessAnotherFolderButton"
-                            Grid.Column="2"
+                    <Button Grid.Column="2"
                             Text="📁 Process Another"
                             Style="{StaticResource PrimaryButtonStyle}"
                             HeightRequest="52"
                             FontSize="14"
-                            Clicked="OnProcessAnotherFolderClicked" />
+                            Command="{Binding ProcessAnotherFolderCommand}" />
                 </Grid>
             </StackLayout>
         </Grid>

@@ -25,7 +25,7 @@ namespace LSBSteganographyDetector
 #endif
 
             // Register services
-            builder.Services.AddSingleton<StatisticalLSBDetector>();
+            builder.Services.AddSingleton<IStatisticalLSBDetector, StatisticalLSBDetectorRefactored>();
 
             return builder.Build();
         }

@@ -42,13 +42,11 @@
                         <!-- Source Image Selection -->
                         <StackLayout Spacing="12">
                             <Label Text="Source Image:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
-                            <Button x:Name="SelectSourceImageButton"
-                                    Text="📁 Choose Source Image"
+                            <Button Text="📁 Choose Source Image"
                                     Style="{StaticResource PrimaryButtonStyle}"
                                     HeightRequest="52"
-                                    Clicked="OnSelectSourceImageClicked" />
-                            <Label x:Name="SourceImageLabel" 
-                                   Text="No image selected" 
+                                    Command="{Binding SelectSourceImageCommand}" />
+                            <Label Text="{Binding SourceImageLabel}" 
                                    Style="{StaticResource CaptionStyle}" />
                         </StackLayout>
 
@@ -59,53 +57,38 @@
                                    CornerRadius="12" 
                                    Padding="4"
                                    HasShadow="False">
-                                <Editor x:Name="MessageEditor"
+                                <Editor Text="{Binding Message}"
                                         Placeholder="Enter your secret message here..."
                                         Style="{StaticResource ModernEditorStyle}"
-                                        HeightRequest="120"
-                                        TextChanged="OnMessageTextChanged" />
+                                        HeightRequest="120" />
                             </Frame>
                             <StackLayout Orientation="Horizontal" Spacing="16" HorizontalOptions="FillAndExpand">
-                                <Label x:Name="MessageLengthLabel" 
-                                       Text="0 characters" 
+                                <Label Text="{Binding MessageLength}" 
                                        Style="{StaticResource CaptionStyle}"
                                        VerticalOptions="Center" />
-                                <Label x:Name="CapacityLabel" 
-                                       Text="(Capacity: unknown)" 
+                                <Label Text="{Binding Capacity}" 
                                        Style="{StaticResource CaptionStyle}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="EndAndExpand" />
                             </StackLayout>
                         </StackLayout>
 
-                        <!-- Embed Method Selection -->
+                        <!-- Simplified Embed Action -->
                         <StackLayout Spacing="12">
-                            <Label Text="Embedding Method:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                                <Button x:Name="EmbedStandardButton"
-                                        Grid.Column="0"
-                                        Text="🔐 Standard Embed"
-                                        Style="{StaticResource PrimaryButtonStyle}"
-                                        HeightRequest="56"
-                                        IsEnabled="False"
-                                        Clicked="OnEmbedStandardClicked" />
-                                
-                                <Button x:Name="EmbedPythonButton"
-                                        Grid.Column="1"
-                                        Text="🐍 Python Compatible"
-                                        Style="{StaticResource WarningButtonStyle}"
-                                        HeightRequest="56"
-                                        IsEnabled="False"
-                                        Clicked="OnEmbedPythonClicked" />
-                            </Grid>
+                            <Button Text="🔐 Embed Message"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    HeightRequest="56"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    IsEnabled="{Binding CanEmbed}"
+                                    Command="{Binding EmbedMessageCommand}" />
                             
                             <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                                    CornerRadius="8" 
                                    Padding="12"
                                    HasShadow="False">
                                 <Label Style="{StaticResource CaptionStyle}">
-                                    <Label.Text>• Standard: Compatible with this app's extractor
-• Python Compatible: Compatible with your Python script</Label.Text>
+                                    <Label.Text>💡 Creates a steganographic image with your message hidden in the least significant bits. Works best with PNG images.</Label.Text>
                                 </Label>
                             </Frame>
                         </StackLayout>
@@ -127,130 +110,67 @@
                         <!-- Stego Image Selection -->
                         <StackLayout Spacing="12">
                             <Label Text="Steganographic Image:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
-                            <Button x:Name="SelectStegoImageButton"
-                                    Text="📁 Choose Stego Image"
+                            <Button Text="📁 Choose Stego Image"
                                     Style="{StaticResource DangerButtonStyle}"
                                     HeightRequest="52"
-                                    Clicked="OnSelectStegoImageClicked" />
-                            <Label x:Name="StegoImageLabel" 
-                                   Text="No image selected" 
+                                    Command="{Binding SelectStegoImageCommand}" />
+                            <Label Text="{Binding StegoImageLabel}" 
                                    Style="{StaticResource CaptionStyle}" />
                         </StackLayout>
 
-                        <!-- Extraction Method Selection -->
+                        <!-- Simplified Extract Action -->
                         <StackLayout Spacing="12">
-                            <Label Text="Extraction Method:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                                <Button x:Name="ExtractStandardButton"
-                                        Grid.Column="0"
-                                        Text="📤 Standard Extract"
-                                        Style="{StaticResource DangerButtonStyle}"
-                                        HeightRequest="56"
-                                        IsEnabled="False"
-                                        Clicked="OnExtractStandardClicked" />
-                                
-                                <Button x:Name="ExtractPythonButton"
-                                        Grid.Column="1"
-                                        Text="🐍 Python Compatible"
-                                        Style="{StaticResource WarningButtonStyle}"
-                                        HeightRequest="56"
-                                        IsEnabled="False"
-                                        Clicked="OnExtractPythonClicked" />
-                            </Grid>
+                            <Button Text="📤 Extract Message"
+                                    Style="{StaticResource DangerButtonStyle}"
+                                    HeightRequest="56"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    IsEnabled="{Binding CanExtract}"
+                                    Command="{Binding ExtractMessageCommand}" />
                             
                             <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                                    CornerRadius="8" 
                                    Padding="12"
                                    HasShadow="False">
                                 <Label Style="{StaticResource CaptionStyle}">
-                                    <Label.Text>• Standard: For images created with this app
-• Python Compatible: For images created with Python scripts</Label.Text>
+                                    <Label.Text>🔍 Extracts hidden messages from steganographic images created with this app.</Label.Text>
                                 </Label>
                             </Frame>
                         </StackLayout>
 
                         <!-- Enhanced Extracted Message Display -->
-                        <StackLayout x:Name="ExtractedMessagePanel" IsVisible="False" Spacing="16">
+                        <StackLayout IsVisible="{Binding ShowExtractedMessage}" Spacing="16">
                             <Label Text="Extracted Message:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
                             <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                                    CornerRadius="12" 
                                    Padding="20"
                                    HasShadow="False">
-                                <Label x:Name="ExtractedMessageLabel" 
-                                       Text="" 
+                                <Label Text="{Binding ExtractedMessageText}" 
                                        FontFamily="Courier"
                                        Style="{StaticResource BodyStyle}"
                                        LineBreakMode="WordWrap" />
                             </Frame>
-                            <Button x:Name="CopyMessageButton"
-                                    Text="📋 Copy to Clipboard"
+                            <Button Text="📋 Copy to Clipboard"
                                     Style="{StaticResource SecondaryButtonStyle}"
                                     HeightRequest="48"
-                                    Clicked="OnCopyMessageClicked" />
+                                    Command="{Binding CopyMessageCommand}" />
                         </StackLayout>
-                    </StackLayout>
-                </Frame>
-
-                <!-- Enhanced Test Suite Section -->
-                <Frame Style="{StaticResource ElevatedCardStyle}">
-                    <StackLayout Spacing="20">
-                        <StackLayout Orientation="Horizontal" Spacing="12" HorizontalOptions="Center">
-                            <Label Text="🧪" FontSize="24" VerticalOptions="Center" />
-                            <Label Text="Test Suite Generator" 
-                                   Style="{StaticResource SubheadlineStyle}"
-                                   FontSize="20"
-                                   TextColor="{StaticResource Warning}"
-                                   VerticalOptions="Center" />
-                        </StackLayout>
-                        
-                        <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
-                               CornerRadius="12" 
-                               Padding="16"
-                               HasShadow="False">
-                            <Label Text="Generate a complete test suite with various steganography scenarios for validating the detector."
-                                   Style="{StaticResource BodyStyle}"
-                                   HorizontalTextAlignment="Center" />
-                        </Frame>
-
-                        <!-- Test Image Selection -->
-                        <StackLayout Spacing="12">
-                            <Label Text="Base Image:" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" />
-                            <Button x:Name="SelectTestImageButton"
-                                    Text="📁 Choose Base Image"
-                                    Style="{StaticResource WarningButtonStyle}"
-                                    HeightRequest="52"
-                                    Clicked="OnSelectTestImageClicked" />
-                            <Label x:Name="TestImageLabel" 
-                                   Text="No image selected" 
-                                   Style="{StaticResource CaptionStyle}" />
-                        </StackLayout>
-
-                        <!-- Generate Test Suite Button -->
-                        <Button x:Name="GenerateTestSuiteButton"
-                                Text="🧪 Generate Test Suite"
-                                Style="{StaticResource WarningButtonStyle}"
-                                HeightRequest="56"
-                                FontSize="18"
-                                IsEnabled="False"
-                                Clicked="OnGenerateTestSuiteClicked" />
                     </StackLayout>
                 </Frame>
 
                 <!-- Enhanced Progress Panel -->
-                <StackLayout x:Name="ProgressPanel" IsVisible="False" Spacing="16">
+                <StackLayout IsVisible="{Binding ShowProgress}" Spacing="16">
                     <Frame BackgroundColor="{StaticResource BackgroundTertiary}" 
                            CornerRadius="16" 
                            Padding="32"
                            HasShadow="False"
                            Style="{StaticResource ModernCardStyle}">
                         <StackLayout Spacing="16">
-                            <ActivityIndicator x:Name="ProgressIndicator" 
-                                               IsRunning="False" 
+                            <ActivityIndicator IsRunning="{Binding IsBusy}" 
                                                Color="{StaticResource Primary}"
                                                WidthRequest="48"
                                                HeightRequest="48" />
-                            <Label x:Name="ProgressLabel" 
-                                   Text="Processing..." 
+                            <Label Text="{Binding ProgressText}" 
                                    Style="{StaticResource BodyLargeStyle}"
                                    HorizontalOptions="Center" 
                                    FontAttributes="Bold" />
@@ -273,17 +193,17 @@
 Embed Message:
 1. Select a source image (PNG recommended)
 2. Enter your secret message
-3. Choose embedding method and click "Embed Message"
+3. Click "Embed Message" to create steganographic image
 
 Extract Message:
 1. Select an image that contains hidden data
-2. Choose the appropriate extraction method
-3. Click "Extract Message" to reveal hidden content
+2. Click "Extract Message" to reveal hidden content
 
-Test Suite:
-Generate test images with various steganography patterns to validate your detector's accuracy.
-
-Note: LSB steganography works best with PNG images. JPEG compression may destroy hidden data.
+Tips:
+• LSB steganography works best with PNG images
+• JPEG compression may destroy hidden data
+• Larger images can hide longer messages
+• The hidden message is invisible to the naked eye
                             </Label.Text>
                         </Label>
                     </StackLayout>

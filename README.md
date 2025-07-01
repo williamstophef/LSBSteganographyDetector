@@ -15,7 +15,6 @@ A complete .NET MAUI application that uses proven statistical methods to detect 
 ✅ **Beautiful UI** - Modern Material Design interface  
 ✅ **Detailed Reports** - Comprehensive analysis with exportable results  
 ✅ **Fast Performance** - Optimized ImageSharp processing  
-✅ **Professional Grade** - Production-ready for security applications
 
 ---
 
@@ -26,23 +25,6 @@ A complete .NET MAUI application that uses proven statistical methods to detect 
 - Visual Studio 2022 (17.8+) with MAUI workload
 - Platform-specific SDKs (Android, iOS, etc.)
 
-### **Installation**
-```bash
-# Clone or create the project
-dotnet new maui -n MauiLSBDetector
-
-# Add the files from this implementation
-# (Copy all the provided files to your project)
-
-# Restore packages
-dotnet restore
-
-# Build and run
-dotnet build
-dotnet run
-```
-
----
 
 ## **🧪 How It Works - The Science**
 
@@ -220,30 +202,14 @@ Detection Criteria:
 3. Includes all test details and metadata
 
 ---
-
-## **🧪 Test Cases & Validation**
-
-### **Test with Clean Images**
-```
-Expected Result: ✅ NO STEGANOGRAPHY DETECTED
-- All 5 tests should pass (show as NORMAL)
-- Very Low to Low risk level
-- Confidence < 40%
-```
-
-### **Test with LSB Steganography**
-```
-Expected Result: ⚠️ STEGANOGRAPHY DETECTED
-- 2+ tests should fail (show as SUSPICIOUS)
-- Medium to Very High risk level
-- Confidence > 40%
-```
+`
 
 ### **Creating Test Images**
 You can create test LSB steganography using tools like:
 - **OpenStego** (Free, open-source)
 - **Steghide** (Command-line tool)
 - **Online LSB tools** (Various web-based tools)
+- **Or use the app to create your own test images
 
 ---
 
@@ -253,8 +219,8 @@ You can create test LSB steganography using tools like:
 - **Very Low (0-20%)**: Clean image, no steganography
 - **Low (20-40%)**: Possibly clean, minimal suspicion
 - **Medium (40-60%)**: Moderate suspicion, investigate further
-- **High (60-80%)**: Strong suspicion, likely steganography
-- **Very High (80-100%)**: Almost certain steganography
+- **High (60-85%)**: Strong suspicion, likely steganography
+- **Very High (85-100%)**: Almost certain steganography
 
 ### **Test Interpretations**
 
@@ -266,29 +232,6 @@ You can create test LSB steganography using tools like:
 | **Entropy: SUSPICIOUS** | LSB plane too random for natural image |
 | **Histogram: SUSPICIOUS** | Artificial pixel value patterns |
 
----
-
-## **🔧 Technical Architecture**
-
-### **Core Components**
-```
-Models/
-├── DetectionResult.cs     # Results data structure
-├── TestResult.cs         # Individual test results
-└── ImageStats.cs         # Image metadata
-
-Services/
-└── StatisticalLSBDetector.cs   # Core detection algorithms
-
-Views/
-├── MainPage.xaml         # UI layout
-└── MainPage.xaml.cs      # UI logic and interactions
-```
-
-### **Key Dependencies**
-- **SixLabors.ImageSharp**: High-performance image processing
-- **Microsoft.Maui.Controls**: Cross-platform UI framework
-- **System.Threading.Tasks**: Async processing
 
 ---
 
@@ -296,8 +239,8 @@ Views/
 
 - **Processing Speed**: 1-3 seconds for typical images (1MB-5MB)
 - **Memory Usage**: Efficient streaming processing
-- **Platform Support**: Optimized for mobile and desktop
-- **Image Formats**: PNG, JPG, BMP, GIF, TIFF supported
+- **Platform Support**: Optimized for desktop
+- **Image Formats**: PNG supported
 
 ---
 
@@ -322,8 +265,6 @@ This implementation is based on **peer-reviewed research** and proven statistica
 This detector is specifically for **LSB steganography**. It will NOT detect:
 - **Advanced steganography** (DCT-based, spread spectrum, etc.)
 - **Encrypted/compressed hidden data** without LSB embedding
-- **Non-steganographic modifications** (filters, compression artifacts)
-- **Watermarks or metadata** (different detection methods needed)
 
 ---
 
@@ -340,36 +281,7 @@ private const double HISTOGRAM_THRESHOLD = 0.1;    // Lower = more sensitive
 private const double PYTHON_LSB_THRESHOLD = 0.30;  // Lower = more sensitive
 ```
 
-### **Adding New Tests**
-1. Create new test method in `StatisticalLSBDetector.cs`
-2. Add to test execution in `DetectLSBAsync`
-3. Update UI to display new results
 
----
-
-## **📱 Platform-Specific Features**
-
-### **Windows**
-- Full file system access
-- Drag-and-drop support
-- Desktop-optimized layout
-
----
-
-## **🎖️ Why This Works (vs Deep Learning)**
-
-**Deep Learning Approach**: ❌ Failed with ~50% accuracy
-- LSB changes too subtle (±1/255 = 0.004)
-- Requires unrealistic training data
-- Cannot detect real-world LSB steganography
-
-**Statistical Approach**: ✅ Actually works
-- Targets specific LSB artifacts
-- Based on mathematical properties
-- Proven in academic research
-- Handles real steganography tools
-
----
 
 ## **📄 License & Credits**
 
