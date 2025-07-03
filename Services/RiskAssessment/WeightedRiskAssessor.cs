@@ -5,90 +5,141 @@ namespace LSBSteganographyDetector.Services.RiskAssessment
 {
     /// <summary>
     /// Weighted risk assessor that calculates overall risk based on test weights
+    /// Enhanced to account for extreme deviations in test scores
     /// </summary>
     public class WeightedRiskAssessor : IRiskAssessor
     {
-        private readonly Dictionary<string, double> _testWeights;
+        private readonly Dictionary<string, double> _baseTestWeights;
 
         public WeightedRiskAssessor()
         {
-            // Initialize test weights based on reliability and effectiveness
-            // Chi-Square and RS Analysis are the gold standard - heavily weighted
-            _testWeights = new Dictionary<string, double>
+            // Base weights for each test
+            _baseTestWeights = new Dictionary<string, double>
             {
-                ["Chi-Square Test"] = 3.0,        // Very high weight - most proven and reliable
-                ["RS Analysis (Flipping Mask)"] = 3.0,  // Very high weight - classical method, highly reliable
-                ["Sample Pair Analysis"] = 1.0,   // Moderate weight - solid foundation but secondary
-                ["Python LSB Pattern"] = 1.0,     // Moderate weight - specific use case
-                ["Entropy Analysis"] = 0.5,       // Low weight - can have false positives
-                ["Histogram Analysis"] = 0.5      // Low weight - least reliable method
+                ["Chi-Square Test"] = 4.0,        // Highest base weight - most proven and reliable
+                ["RS Analysis (Flipping Mask)"] = 4.0,  // Highest base weight - classical method, highly reliable
+                ["Sample Pair Analysis"] = 1.5,   // Moderate weight - solid foundation
+                ["Python LSB Pattern"] = 1.5,     // Moderate weight - specific use case but effective
+                ["Entropy Analysis"] = 0.6,       // Lower weight - can have false positives
+                ["Histogram Analysis"] = 1.0      // Moderate weight - useful when combined with others
             };
         }
 
         public void AssessRisk(DetectionResult result, long fileSizeBytes)
         {
-            // Calculate weighted score based on suspicious tests
+            // Calculate enhanced weighted score with magnitude bonuses
             var suspiciousTests = result.TestResults.Values.Where(t => t.IsSuspicious).ToList();
             var totalWeight = 0.0;
             var weightedScore = 0.0;
 
             foreach (var test in result.TestResults.Values)
             {
-                var weight = GetTestWeight(test.TestName);
-                totalWeight += weight;
+                var baseWeight = GetBaseTestWeight(test.TestName);
+                var enhancedWeight = CalculateEnhancedWeight(test, baseWeight);
+                totalWeight += enhancedWeight;
                 
                 if (test.IsSuspicious)
                 {
-                    // Apply full weight for suspicious tests
-                    weightedScore += weight;
+                    // Apply enhanced weight for suspicious tests
+                    weightedScore += enhancedWeight;
                 }
                 else
                 {
                     // Apply partial weight based on how close to threshold
                     var proximityFactor = Math.Min(1.0, test.Score / test.Threshold);
-                    weightedScore += weight * proximityFactor * 0.3; // Up to 30% for non-suspicious but elevated scores
+                    weightedScore += enhancedWeight * proximityFactor * 0.25; // Up to 25% for non-suspicious but elevated scores
                 }
             }
 
             // Normalize the weighted score
             var normalizedScore = totalWeight > 0 ? weightedScore / totalWeight : 0;
 
-            // Overall confidence calculation with conservative approach
-            result.OverallConfidence = Math.Min(95, normalizedScore * 100); // Cap at 95%
+            // Enhanced confidence calculation
+            result.OverallConfidence = Math.Min(98, normalizedScore * 100); // Cap at 98%
 
-            // Balanced risk level determination
+            // Enhanced risk level determination with lower thresholds for extreme cases
             var chiSquareFlagging = suspiciousTests.Any(t => t.TestName == "Chi-Square Test");
             var rsAnalysisFlagging = suspiciousTests.Any(t => t.TestName == "RS Analysis (Flipping Mask)");
+            var samplePairFlagging = suspiciousTests.Any(t => t.TestName == "Sample Pair Analysis");
+            var pythonLSBFlagging = suspiciousTests.Any(t => t.TestName == "Python LSB Pattern");
+            var histogramFlagging = suspiciousTests.Any(t => t.TestName == "Histogram Analysis");
+            var entropyFlagging = suspiciousTests.Any(t => t.TestName == "Entropy Analysis");
+
             var bothPremiumTestsFlagging = chiSquareFlagging && rsAnalysisFlagging;
             var anyPremiumTestFlagging = chiSquareFlagging || rsAnalysisFlagging;
+            var reliableTestsFlagging = chiSquareFlagging || rsAnalysisFlagging || samplePairFlagging || pythonLSBFlagging;
+            var onlyUnreliableTestsFlagging = suspiciousTests.Count > 0 && !reliableTestsFlagging;
 
-            if (bothPremiumTestsFlagging && result.OverallConfidence > 80)
+            // Check for extreme Chi-Square deviations
+            var chiSquareTest = result.TestResults.Values.FirstOrDefault(t => t.TestName == "Chi-Square Test");
+            var hasExtremeChiSquare = chiSquareTest != null && chiSquareTest.IsSuspicious && 
+                                     (chiSquareTest.Score / chiSquareTest.Threshold) > 100; // 100x threshold
+
+            // Check for extreme RS Analysis deviations  
+            var rsTest = result.TestResults.Values.FirstOrDefault(t => t.TestName == "RS Analysis (Flipping Mask)");
+            var hasExtremeRS = rsTest != null && rsTest.IsSuspicious && 
+                              (rsTest.Score / rsTest.Threshold) > 5; // 5x threshold
+
+            if (hasExtremeChiSquare || hasExtremeRS)
+            {
+                // Extreme deviation detected - very high confidence in steganography
+                result.RiskLevel = "Very High";
+                result.IsSuspicious = true;
+                result.OverallConfidence = Math.Max(result.OverallConfidence, 85);
+            }
+            else if (bothPremiumTestsFlagging && result.OverallConfidence > 70)
             {
                 result.RiskLevel = "Very High";
                 result.IsSuspicious = true;
             }
-            else if (bothPremiumTestsFlagging && result.OverallConfidence > 65)
+            else if (bothPremiumTestsFlagging && result.OverallConfidence > 55)
             {
                 result.RiskLevel = "High";
                 result.IsSuspicious = true;
             }
-            else if (anyPremiumTestFlagging && result.OverallConfidence > 70)
+            else if (anyPremiumTestFlagging && result.OverallConfidence > 60)
+            {
+                result.RiskLevel = "High";
+                result.IsSuspicious = true;
+            }
+            else if (suspiciousTests.Count >= 4 && reliableTestsFlagging && result.OverallConfidence > 55)
+            {
+                // 4+ tests flagging with at least one reliable test should be high risk
+                result.RiskLevel = "High";
+                result.IsSuspicious = true;
+            }
+            else if (suspiciousTests.Count >= 3 && reliableTestsFlagging && result.OverallConfidence > 50)
             {
                 result.RiskLevel = "High";
                 result.IsSuspicious = true;
             }
             else if (suspiciousTests.Count >= 3 && result.OverallConfidence > 65)
             {
-                result.RiskLevel = "High";
-                result.IsSuspicious = true;
-            }
-            else if (suspiciousTests.Count >= 2 && result.OverallConfidence > 55)
-            {
+                // 3+ tests but no reliable ones need higher confidence
                 result.RiskLevel = "Medium";
                 result.IsSuspicious = false;
             }
-            else if (suspiciousTests.Count >= 1 && result.OverallConfidence > 45)
+            else if (suspiciousTests.Count >= 2 && reliableTestsFlagging && result.OverallConfidence > 50)
             {
+                // 2+ tests with reliable ones flagging
+                result.RiskLevel = "Medium";
+                result.IsSuspicious = false;
+            }
+            else if (suspiciousTests.Count >= 2 && result.OverallConfidence > 60)
+            {
+                // 2+ unreliable tests need higher confidence
+                result.RiskLevel = "Medium";
+                result.IsSuspicious = false;
+            }
+            else if (anyPremiumTestFlagging && result.OverallConfidence > 45)
+            {
+                // Single premium test flagging with decent confidence
+                result.RiskLevel = "Medium";
+                result.IsSuspicious = false;
+            }
+            else if (onlyUnreliableTestsFlagging && result.OverallConfidence > 70)
+            {
+                // Only unreliable tests (entropy/histogram) flagging - need very high confidence
                 result.RiskLevel = "Medium";
                 result.IsSuspicious = false;
             }
@@ -98,16 +149,52 @@ namespace LSBSteganographyDetector.Services.RiskAssessment
                 result.IsSuspicious = false;
             }
 
-            // Generate summary
-            GenerateSummary(result, suspiciousTests, fileSizeBytes);
+            // Generate enhanced summary
+            GenerateEnhancedSummary(result, suspiciousTests, fileSizeBytes);
         }
 
-        private double GetTestWeight(string testName)
+        private double GetBaseTestWeight(string testName)
         {
-            return _testWeights.TryGetValue(testName, out var weight) ? weight : 1.0;
+            return _baseTestWeights.TryGetValue(testName, out var weight) ? weight : 1.0;
         }
 
-        private void GenerateSummary(DetectionResult result, List<TestResult> suspiciousTests, long fileSizeBytes)
+        private double CalculateEnhancedWeight(TestResult test, double baseWeight)
+        {
+            if (!test.IsSuspicious || test.Threshold <= 0)
+                return baseWeight;
+
+            // Calculate magnitude of deviation
+            var deviationRatio = test.Score / test.Threshold;
+
+            // Apply magnitude bonus for extreme deviations
+            double magnitudeBonus = 1.0;
+            
+            if (test.TestName == "Chi-Square Test")
+            {
+                // Chi-Square gets significant bonuses for extreme deviations
+                if (deviationRatio > 1000) magnitudeBonus = 3.0;      // 1000x+ threshold
+                else if (deviationRatio > 100) magnitudeBonus = 2.5;  // 100x+ threshold  
+                else if (deviationRatio > 10) magnitudeBonus = 2.0;   // 10x+ threshold
+                else if (deviationRatio > 3) magnitudeBonus = 1.5;    // 3x+ threshold
+            }
+            else if (test.TestName == "RS Analysis (Flipping Mask)")
+            {
+                // RS Analysis gets bonuses for extreme deviations
+                if (deviationRatio > 10) magnitudeBonus = 2.5;        // 10x+ threshold
+                else if (deviationRatio > 5) magnitudeBonus = 2.0;    // 5x+ threshold
+                else if (deviationRatio > 2) magnitudeBonus = 1.5;    // 2x+ threshold
+            }
+            else
+            {
+                // Other tests get modest bonuses
+                if (deviationRatio > 5) magnitudeBonus = 1.8;         // 5x+ threshold
+                else if (deviationRatio > 2) magnitudeBonus = 1.4;    // 2x+ threshold
+            }
+
+            return baseWeight * magnitudeBonus;
+        }
+
+        private void GenerateEnhancedSummary(DetectionResult result, List<TestResult> suspiciousTests, long fileSizeBytes)
         {
             var summary = new List<string>();
             
@@ -120,21 +207,35 @@ namespace LSBSteganographyDetector.Services.RiskAssessment
             {
                 summary.Add($"Detected {suspiciousTests.Count} statistical anomal{(suspiciousTests.Count == 1 ? "y" : "ies")}:");
                 
-                foreach (var test in suspiciousTests.OrderByDescending(t => GetTestWeight(t.TestName)))
+                // Sort by weight (enhanced weight for better prioritization)
+                var prioritizedTests = suspiciousTests.OrderByDescending(t => 
                 {
-                    summary.Add($"• {test.TestName}: {test.Interpretation}");
+                    var baseWeight = GetBaseTestWeight(t.TestName);
+                    return CalculateEnhancedWeight(t, baseWeight);
+                }).ToList();
+
+                foreach (var test in prioritizedTests)
+                {
+                    var deviationRatio = test.Threshold > 0 ? test.Score / test.Threshold : 1;
+                    var severity = "";
+                    
+                    if (deviationRatio > 100) severity = " (EXTREME deviation)";
+                    else if (deviationRatio > 10) severity = " (Very high deviation)";
+                    else if (deviationRatio > 3) severity = " (High deviation)";
+                    
+                    summary.Add($"• {test.TestName}: {test.Interpretation}{severity}");
                 }
 
-                // Add recommendation based on risk level
+                // Enhanced recommendations based on risk level
                 switch (result.RiskLevel)
                 {
                     case "Very High":
-                        summary.Add("\n⚠️ VERY HIGH RISK: Strong evidence of steganography detected.");
-                        summary.Add("Recommend immediate investigation and content analysis.");
+                        summary.Add("\n🚨 VERY HIGH RISK: Strong evidence of steganography detected.");
+                        summary.Add("Immediate investigation recommended - likely contains hidden data.");
                         break;
                     case "High":
                         summary.Add("\n⚠️ HIGH RISK: Multiple indicators suggest hidden data.");
-                        summary.Add("Manual review recommended.");
+                        summary.Add("Manual review and deeper analysis recommended.");
                         break;
                     case "Medium":
                         summary.Add("\n⚠️ MEDIUM RISK: Some statistical irregularities detected.");

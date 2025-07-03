@@ -13,7 +13,7 @@ namespace LSBSteganographyDetector.Services.StatisticalTests
         private const double THRESHOLD = 18.0; // Balanced threshold - catches steganography while minimizing false positives
         
         public string Name => "Chi-Square Test";
-        public double Weight => 3.0; // Very high weight - most proven and reliable
+        public double Weight => 5.0; // Very high weight - most proven and reliable
 
         public TestResult Execute(Image<Rgb24> image)
         {

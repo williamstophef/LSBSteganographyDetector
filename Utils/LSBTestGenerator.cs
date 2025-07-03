@@ -96,17 +96,6 @@ namespace LSBSteganographyDetector.Utils
                         // Extract LSB from red channel
                         bool bit = (pixel.R & 1) == 1;
                         extractedBits.Add(bit);
-                        
-                        // Check for end marker (8 consecutive false bits)
-                        if (extractedBits.Count >= 8)
-                        {
-                            var lastByte = extractedBits.Skip(extractedBits.Count - 8).Take(8).ToArray();
-                            if (lastByte.All(b => !b)) // All bits are false (null byte)
-                            {
-                                extractedBits.RemoveRange(extractedBits.Count - 8, 8); // Remove end marker
-                                return;
-                            }
-                        }
                     }
                 }
             });
@@ -124,6 +113,14 @@ namespace LSBSteganographyDetector.Utils
                             b |= (byte)(1 << j);
                     }
                     messageBytes.Add(b);
+                    
+                    // Check for null terminator after constructing each byte
+                    if (b == 0)
+                    {
+                        // Found null terminator - remove it and stop
+                        messageBytes.RemoveAt(messageBytes.Count - 1);
+                        break;
+                    }
                 }
             }
             
